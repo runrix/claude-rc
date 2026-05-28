@@ -1,6 +1,7 @@
 # claude-rc
 
 **Pay little money, do big things.**
+*(With a Claude Pro/Max/Team subscription, use any third-party model for inference — claude-rc is free.)*
 
 Route Claude Code inference to any Anthropic-compatible provider while keeping Remote Control — control your session from `claude.ai/code` or Claude App.
 

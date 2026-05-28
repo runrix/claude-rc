@@ -1,6 +1,7 @@
 # claude-rc
 
 **花小钱，办大事。**
+*（只需 Claude Pro/Max/Team 订阅，推理走第三方模型 —— claude-rc 本身免费。）*
 
 让 Claude Code 用任意 Anthropic 兼容的第三方模型推理，同时保留 Remote Control —— 可从 `claude.ai/code` 或 Claude App 远程控制本地会话。
 
