@@ -103,7 +103,7 @@ claude-rc --help     # 完整帮助
 
 | 参数 | 说明 |
 |------|------|
-| `-x, --bypass` | 快捷：传递 `--permission-mode bypassPermissions` 给 claude |
+| `-x, --bypass` | 快捷：传递 `--permission-mode bypassPermissions` 给 claude（可选） |
 | `--name` | Remote Control session 名称（默认自动生成） |
 | `--dir` | 工作目录（默认当前目录） |
 | `--proxy` | 手动指定出口代理 |

@@ -1,50 +1,28 @@
 # claude-rc
 
 **Pay little money, do big things.**
-*(With a Claude Pro/Max/Team subscription, use any third-party model for inference — claude-rc itself is free.)*
+*(With a Claude Pro/Max/Team subscription, use any third-party model for inference — claude-rc is free.)*
 
-Route Claude Code inference to any Anthropic-compatible provider while keeping Remote Control — control your session from `claude.ai/code` or Claude App. Output auto-adapts to your system language (en / zh).
+Route Claude Code inference to any Anthropic-compatible provider while keeping Remote Control. Auto-adapts to your system language.
 
 [中文文档](./README_ZH.md)
 
 ---
 
-## Features
-
-- Third-party model inference + Remote Control preserved
-- `-x` shortcut: auto-passes `--permission-mode bypassPermissions` to claude
-- `reconnect`: pick a past bridge session and resume it
-- CC Switch compatible — auto-detected and transparently passed through
-- Zero dependencies — single binary
-- Cross-platform — macOS (Apple Silicon & Intel), Linux, Windows
-- Auto i18n — adapts to system language
-
----
-
 ## Install
-
-**macOS / Linux:**
 
 ```bash
 curl -fsSL https://github.com/runrix/claude-rc/releases/latest/download/install.sh | bash
 ```
 
-**Windows:**
-
-Download `claude-rc-windows-amd64.exe` from [Releases](https://github.com/runrix/claude-rc/releases/latest) and add to PATH.
-
----
-
 ## Prerequisites
 
-- Claude Code CLI installed and logged in (`claude login`, requires Pro/Max/Team)
-- Access to `api.anthropic.com` (directly or via proxy)
-
----
+- [Claude Code](https://claude.ai/code) installed and logged in (`claude login`, requires Pro/Max/Team)
+- Network access to `api.anthropic.com`
 
 ## Configure Provider
 
-Create `.claude/settings.local.json` in your project directory (or any parent):
+Create `.claude/settings.local.json` in your project (or any parent directory):
 
 ```json
 {
@@ -56,76 +34,62 @@ Create `.claude/settings.local.json` in your project directory (or any parent):
 }
 ```
 
-Or use [CC Switch](https://github.com/farion1231/cc-switch) to manage providers — `claude-rc` auto-detects its config.
+Or use [CC Switch](https://github.com/farion1231/cc-switch) — `claude-rc` auto-detects it.
 
----
-
-## Usage
-
-### Quick start (most common)
+## Quick Start
 
 ```bash
-claude-rc -x                     # start bridge + bypass all permissions
-claude-rc -x --name "my-project" # with a custom name
+claude-rc                           # start with auto-generated name
+claude-rc --name "my-project"       # custom name
+claude-rc -x                        # skip permission prompts (optional)
+claude-rc -x --name "my-project"    # both
 ```
 
-### Reconnect to a past session
+After launch, open `claude.ai/code` to remote control your session.
+
+## Reconnect
+
+Resume a past bridge session (e.g. after terminal crash):
 
 ```bash
-claude-rc reconnect              # pick from a list of past bridge sessions
-claude-rc reconnect -x           # same, with bypass permissions
+claude-rc reconnect                 # pick from history
+claude-rc reconnect -x              # skip permissions
 ```
 
-### Passing flags to claude
+## Pass Flags to Claude
 
-Any arguments after `--` are forwarded directly to the `claude` command:
+Arguments after `--` are forwarded directly to the `claude` command:
 
 ```bash
-claude-rc -x -- --model claude-sonnet-4-6        # override model
+claude-rc -- --model claude-sonnet-4-6           # override model
 claude-rc -x -- --permission-mode acceptEdits     # explicit permission mode
-claude-rc -x -- --tmux --worktree                 # isolated tmux session
-claude-rc -x --name foo -- --continue             # resume last session in this dir
+claude-rc -- --tmux --worktree                    # tmux session
 ```
 
-### Other commands
+## Other Commands
 
 ```bash
-claude-rc status     # Show OAuth / proxy / active sessions
-claude-rc test       # Test OAuth token & Bridge API connection
-claude-rc --help     # Full help
+claude-rc status                    # OAuth / proxy / active sessions
+claude-rc test                      # test Bridge API connectivity
 ```
-
-After launch, open `claude.ai/code` or Claude App to remote control your session.
-
----
 
 ## All Flags
 
 | Flag | Description |
 |------|-------------|
-| `-x, --bypass` | Shortcut: pass `--permission-mode bypassPermissions` to claude |
-| `--name` | Remote Control session name (default: auto-generated) |
+| `-x, --bypass` | Pass `--permission-mode bypassPermissions` to claude *(optional)* |
+| `--name` | Session name (auto-generated if omitted) |
 | `--dir` | Working directory (default: cwd) |
 | `--proxy` | Outbound proxy URL |
 | `--token` | OAuth token override (skip Keychain) |
-| `--` | Everything after `--` is forwarded to `claude` verbatim |
-
----
+| `--` | Forward remaining args to `claude` verbatim |
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| `Remote Control failed` | OAuth expired — run `claude login` |
+| `Remote Control failed` | `claude login` |
 | Banner shows wrong model | Check `ANTHROPIC_BASE_URL` in settings |
-| Inference returns 401 | Provider API key expired — update settings |
-| CC Switch not working | Ensure CC Switch is active before launch |
-| Launch fails after crash | Restart terminal and try again |
+| Inference returns 401 | Update provider key |
 
-Proxy request logs are written to `/tmp/claude-rc/proxy-18080.log` (not mixed into the Claude CLI session).
-
----
-
-## License
-
-Personal tool. Use as needed.
+Proxy logs: `/tmp/claude-rc/proxy-18080.log`
