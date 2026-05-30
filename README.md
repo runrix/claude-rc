@@ -1,9 +1,9 @@
 # claude-rc
 
 **Pay little money, do big things.**
-*(With a Claude Pro/Max/Team subscription, use any third-party model for inference — claude-rc is free.)*
+*(With a Claude Pro/Max/Team subscription, use any third-party model for inference — claude-rc itself is free.)*
 
-Route Claude Code inference to any Anthropic-compatible provider while keeping Remote Control — control your session from `claude.ai/code` or Claude App.
+Route Claude Code inference to any Anthropic-compatible provider while keeping Remote Control — control your session from `claude.ai/code` or Claude App. Output auto-adapts to your system language (en / zh).
 
 [中文文档](./README_ZH.md)
 
@@ -11,10 +11,13 @@ Route Claude Code inference to any Anthropic-compatible provider while keeping R
 
 ## Features
 
-- Third-party model inference with Remote Control preserved
-- CC Switch compatible — auto-detects and transparently passes through
+- Third-party model inference + Remote Control preserved
+- `-x` shortcut: auto-passes `--permission-mode bypassPermissions` to claude
+- `reconnect`: pick a past bridge session and resume it
+- CC Switch compatible — auto-detected and transparently passed through
 - Zero dependencies — single binary
 - Cross-platform — macOS (Apple Silicon & Intel), Linux, Windows
+- Auto i18n — adapts to system language
 
 ---
 
@@ -59,16 +62,53 @@ Or use [CC Switch](https://github.com/farion1231/cc-switch) to manage providers 
 
 ## Usage
 
+### Quick start (most common)
+
 ```bash
-claude-rc launch --name "my-project"
-claude-rc launch --name "my-project" --dir ~/code/myapp
-claude-rc launch --name "my-project" --proxy http://127.0.0.1:10808
-LAUNCH_MODEL=deepseek-r1 claude-rc launch --name "test"
-claude-rc status
-claude-rc test
+claude-rc -x                     # start bridge + bypass all permissions
+claude-rc -x --name "my-project" # with a custom name
+```
+
+### Reconnect to a past session
+
+```bash
+claude-rc reconnect              # pick from a list of past bridge sessions
+claude-rc reconnect -x           # same, with bypass permissions
+```
+
+### Passing flags to claude
+
+Any arguments after `--` are forwarded directly to the `claude` command:
+
+```bash
+claude-rc -x -- --model claude-sonnet-4-6        # override model
+claude-rc -x -- --permission-mode acceptEdits     # explicit permission mode
+claude-rc -x -- --tmux --worktree                 # isolated tmux session
+claude-rc -x --name foo -- --continue             # resume last session in this dir
+```
+
+### Other commands
+
+```bash
+claude-rc status     # Show OAuth / proxy / active sessions
+claude-rc test       # Test OAuth token & Bridge API connection
+claude-rc --help     # Full help
 ```
 
 After launch, open `claude.ai/code` or Claude App to remote control your session.
+
+---
+
+## All Flags
+
+| Flag | Description |
+|------|-------------|
+| `-x, --bypass` | Shortcut: pass `--permission-mode bypassPermissions` to claude |
+| `--name` | Remote Control session name (default: auto-generated) |
+| `--dir` | Working directory (default: cwd) |
+| `--proxy` | Outbound proxy URL |
+| `--token` | OAuth token override (skip Keychain) |
+| `--` | Everything after `--` is forwarded to `claude` verbatim |
 
 ---
 
@@ -76,11 +116,13 @@ After launch, open `claude.ai/code` or Claude App to remote control your session
 
 | Issue | Solution |
 |-------|----------|
-| Banner shows wrong model | Check provider settings in `.claude/settings.local.json` |
 | `Remote Control failed` | OAuth expired — run `claude login` |
+| Banner shows wrong model | Check `ANTHROPIC_BASE_URL` in settings |
 | Inference returns 401 | Provider API key expired — update settings |
 | CC Switch not working | Ensure CC Switch is active before launch |
 | Launch fails after crash | Restart terminal and try again |
+
+Proxy request logs are written to `/tmp/claude-rc/proxy-18080.log` (not mixed into the Claude CLI session).
 
 ---
 
